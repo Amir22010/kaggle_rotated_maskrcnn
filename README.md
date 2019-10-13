@@ -109,7 +109,7 @@ Training Your Own Dataset
  - Step 3: In your .yaml config file (e.g. "configs/rotated/e2e_ms_rcnn_R_50_FPN_1x.yaml"), change the DATASETS.TRAIN value to the stuff you added in paths_catalog.py. DATASETS.TEST is optional  
  **NOTE**: SOLVER.MAX_ITER is the default training iterations used for COCO. You'll want to change this to roughly N images in your dataset, multiplied by 5-10x, divided by GPUs used for training. E.g. Set MAX_ITER to 5000-10000 if you have 1000 images on 1 GPU. Make sure to also adjust the learning rate accordingly.  
  I would strongly suggest reading "2. Modify the cfg parameters" in [https://github.com/facebookresearch/maskrcnn-benchmark/blob/master/README.md]() to make sure that your training is properly optimized. 
- - Step 5: Run `python tools/train_net.py --config-file myconfig_in_step3.yaml`
+ - Step 4: Run `python tools/train_net.py --config-file myconfig_in_step3.yaml`
 
 Testing
 ----------------
