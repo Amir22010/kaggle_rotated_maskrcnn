@@ -78,6 +78,9 @@ Prepare Data
 Configs
 ---------------
 All example configs related to rotated maskrcnn are in **configs/rotated** folder
+ - Rotated Mask R-CNN (default): configs/rotated/e2e_mask_rcnn_R_50_FPN_1x.yaml
+ - Rotated Mask Scoring R-CNN (MS-RCNN, gives slightly better mask precision than default): configs/rotated/e2e_ms_rcnn_R_50_FPN_1x.yaml
+ - Rotated Faster R-CNN only (without mask outputs): configs/rotated/e2e_faster_rcnn_R_50_C4_1x.yaml
 
 Pretrained Models
 ---------------
@@ -85,20 +88,28 @@ Pre-trained models (and config) on MSCOCO can be found here:
  - [Rotated MS R-CNN](https://drive.google.com/open?id=1HYER9pFxvg6y43UeqAzu8u1YDazewrns)
  - [MS R-CNN](https://drive.google.com/open?id=1rBmxrW0PqKUKwgWNGDEnEjbupS69DeV0)
 
-
 Training
 ----------------
-Single GPU Training
+Single GPU Training (default training on MSCOCO 2014)
 ```
   python tools/train_net.py --config-file "configs/rotated/e2e_ms_rcnn_R_50_FPN_1x.yaml" SOLVER.IMS_PER_BATCH 2 SOLVER.BASE_LR 0.0025 SOLVER.MAX_ITER 720000 SOLVER.STEPS "(480000, 640000)" TEST.IMS_PER_BATCH 1
 ```
-Multi-GPU Training
+Multi-GPU Training (default training on MSCOCO 2014)
 ```
   export NGPUS=8
   python -m torch.distributed.launch --nproc_per_node=$NGPUS tools/train_net.py --config-file "configs/rotated/e2e_ms_rcnn_R_50_FPN_1x.yaml" 
 ```
 
 For more details, see README.md in https://github.com/facebookresearch/maskrcnn-benchmark
+
+Training Your Own Dataset
+----------------
+ - Step 1: Convert your own dataset to COCO annotation format (a json file). I've created one very simple repo [convert_to_coco](https://github.com/mrlooi/convert_to_coco) to do this; examples include ICDAR datasets to COCO.
+ - Step 2: Add the path of the dataset image directory and coco-format annotation file (from Step 1) into maskrcnn_benchmark/config/paths_catalog.py
+ - Step 3: In your .yaml config file (e.g. "configs/rotated/e2e_ms_rcnn_R_50_FPN_1x.yaml"), change the DATASETS.TRAIN value to the stuff you added in paths_catalog.py. DATASETS.TEST is optional  
+ **NOTE**: SOLVER.MAX_ITER is the default training iterations used for COCO. You'll want to change this to roughly N images in your dataset, multiplied by 5-10x, divided by GPUs used for training. E.g. Set MAX_ITER to 5000-10000 if you have 1000 images on 1 GPU. Make sure to also adjust the learning rate accordingly.  
+ I would strongly suggest reading "2. Modify the cfg parameters" in [https://github.com/facebookresearch/maskrcnn-benchmark/blob/master/README.md]() to make sure that your training is properly optimized. 
+ - Step 5: Run `python tools/train_net.py --config-file myconfig_in_step3.yaml`
 
 Testing
 ----------------
