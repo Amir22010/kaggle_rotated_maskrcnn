@@ -5,7 +5,7 @@ import os
 
 
 class DatasetCatalog(object):
-    DATA_DIR = "datasets"
+    DATA_DIR = "/kaggle/working/training_dataset/training_dataset"
     DATASETS = {
         # CUSTOM STUFF START
         "cocopose_2014_debug": {
