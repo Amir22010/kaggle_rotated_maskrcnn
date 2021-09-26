@@ -5,7 +5,7 @@ import os
 
 
 class DatasetCatalog(object):
-    DATA_DIR = "/kaggle/working/training_dataset/training_dataset"
+    DATA_DIR = "/kaggle/working/training_dataset"
     DATASETS = {
         # CUSTOM STUFF START
         "cocopose_2014_debug": {
@@ -25,22 +25,27 @@ class DatasetCatalog(object):
             "ann_file": "/home/bot/Downloads/Rebin/labelled/coco_rebin.json"
         },
         # CUSTOM STUFF END
+        
 
-        "coco_2017_train": {
-            "img_dir": "coco/train2017",
-            "ann_file": "coco/annotations/instances_train2017.json"
+        "smartflow_train": {
+            "img_dir": "train",
+            "ann_file": "train.json"
         },
-        "coco_2017_val": {
-            "img_dir": "coco/val2017",
-            "ann_file": "coco/annotations/instances_val2017.json"
+        "smartflow_val": {
+            "img_dir": "valid",
+            "ann_file": "valid.json"
+        },
+        "smartflow_test": {
+            "img_dir": "test",
+            "ann_file": "test.json"
         },
         "coco_2014_train": {
-            "img_dir": "coco/train2014",
-            "ann_file": "coco/annotations/instances_train2014.json"
+            "img_dir": "Images/train",
+            "ann_file": "Annotations/train.json"
         },
         "coco_2014_val": {
-            "img_dir": "coco/val2014",
-            "ann_file": "coco/annotations/instances_val2014.json"
+            "img_dir": "Images/test",
+            "ann_file": "Annotations/test.json"
         },
         "coco_2014_minival": {
             "img_dir": "coco/val2014",
@@ -148,6 +153,16 @@ class DatasetCatalog(object):
             )
             return dict(
                 factory="PascalVOCDataset",
+                args=args,
+            )
+        elif "smartflow" in name:
+            data_dir = DatasetCatalog.DATA_DIR
+            attrs = DatasetCatalog.DATASETS[name]
+            args = dict(root=os.path.join(data_dir, attrs["img_dir"]),  # img_dir is the content of step a
+            ann_file=os.path.join(data_dir, attrs["ann_file"]),  # ann_file is the content of a step
+            )
+            return dict(
+                factory="COCODataset",  # MyDataset corresponds
                 args=args,
             )
         raise RuntimeError("Dataset not available: {}".format(name))
